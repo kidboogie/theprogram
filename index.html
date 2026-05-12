@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="referrer" content="origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KID BOOGIE | The Program - Popping Master Class</title>
+    
+    <link rel="icon" type="image/png" href="https://via.placeholder.com/32x32/ffb300/000000?text=KB">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://player.vimeo.com/api/player.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <style>
+        :root {
+            /* Extracted from Kid Boogie Header Artwork */
+            --bg-dark: #050505; 
+            --bg-card: #0a0a0c; 
+            --primary: #00d2ff; /* Cyan/Teal */
+            --secondary: #ffb300; /* Gold/Orange */
+            --accent: #ff3d00; /* Vibrant red/orange accent */
+            --text-main: #ffffff;
+            --text-muted: #b0b0b0; 
+            --font-head: 'Montserrat', sans-serif;
+            --font-body: 'Roboto', sans-serif;
+            
+            /* Gritty street-style shadows instead of soft glows */
+            --box-shadow-hard: 8px 8px 0px rgba(0, 210, 255, 0.4);
+            --box-shadow-hard-alt: 8px 8px 0px rgba(255, 179, 0, 0.4);
+            --text-glow: 0 0 10px rgba(0, 0, 0, 0.8);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background-color: var(--bg-dark); 
+            color: var(--text-main); 
+            font-family: var(--font-body); 
+            line-height: 1.6; 
+            overflow-x: hidden; 
+        }
+
+        /* GLOBAL CSS GRAIN OVERLAY FOR GRITTY FEEL */
+        body::after { 
+            content: ""; 
+            position: fixed; 
+            top: 0; left: 0; width: 100vw; height: 100vh; 
+            background-image: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.06"/%3E%3C/svg%3E'); 
+            pointer-events: none; 
+            z-index: 9999; 
+        }
+
+        h1, h2, h3, h4, h5 { font-family: var(--font-head); text-transform: uppercase; letter-spacing: 1px; font-weight: 900; }
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 2; }
+        .section-padding { padding: 100px 0; position: relative; z-index: 2; }
+        .text-center { text-align: center; }
+        .highlight { color: var(--primary); text-shadow: 2px 2px 0px #000; }
+        .highlight-alt { color: var(--secondary); text-shadow: 2px 2px 0px #000; }
+        .hidden { display: none !important; }
+        
+        /* Buttons */
+        .btn { display: inline-block; padding: 12px 30px; border-radius: 2px; font-weight: 900; text-transform: uppercase; cursor: pointer; border: none; font-size: 0.9rem; letter-spacing: 1.5px; transition: all 0.2s ease; position: relative; text-align: center; }
+        .btn-primary { background: var(--bg-dark); color: var(--primary); border: 2px solid var(--primary); box-shadow: 4px 4px 0px var(--primary); text-shadow: 1px 1px 0px #000; }
+        .btn-primary:hover { background: var(--primary); color: #000; box-shadow: 0px 0px 0px var(--primary); transform: translate(4px, 4px); text-shadow: none; }
+        .btn-secondary { background: var(--bg-dark); border: 2px solid var(--secondary); color: var(--secondary); box-shadow: 4px 4px 0px var(--secondary); }
+        .btn-secondary:hover { background: var(--secondary); color: #000; box-shadow: 0px 0px 0px var(--secondary); transform: translate(4px, 4px); }
+        .btn-outline-accent { background: var(--bg-dark); border: 2px solid var(--accent); color: var(--accent); box-shadow: 4px 4px 0px var(--accent); }
+        .btn-outline-accent:hover { background: var(--accent); color: white; box-shadow: 0px 0px 0px var(--accent); transform: translate(4px, 4px); }
+        
+        /* Forms */
+        .form-group { margin-bottom: 25px; text-align: left; }
+        .form-label { display: block; margin-bottom: 10px; color: var(--text-muted); font-size: 0.9rem; font-weight: 700; text-transform: uppercase; }
+        .form-input, .form-textarea, .form-select { width: 100%; padding: 15px; background: #0a0a0c; border: 2px solid #333; border-radius: 2px; color: white; font-family: var(--font-body); font-size: 1rem; transition: 0.3s; }
+        .form-input:focus, .form-textarea:focus, .form-select:focus { border-color: var(--primary); outline: none; box-shadow: 4px 4px 0px rgba(0, 210, 255, 0.2); }
+        .form-textarea { resize: vertical; min-height: 150px; }
+        
+        /* Password Visibility Styles */
+        .password-container { position: relative; }
+        .password-toggle-icon { position: absolute; top: 50%; right: 15px; transform: translateY(-50%); cursor: pointer; color: #666; }
+        .password-toggle-icon:hover { color: var(--primary); }
+
+        /* Header */
+        header { padding: 15px 0; position: fixed; width: 100%; top: 0; z-index: 1000; background: #050505; border-bottom: 3px solid; border-image: linear-gradient(to right, var(--primary), var(--secondary), var(--accent)) 1; }
+        nav { display: flex; justify-content: space-between; align-items: center; }
+        .header-logo-text { font-family: var(--font-head); font-weight: 900; font-size: 1.5rem; color: var(--text-main); text-transform: uppercase; letter-spacing: 1px; }
+        .nav-links { display: flex; gap: 40px; }
+        .nav-links a { font-size: 1rem; font-weight: 900; text-transform: uppercase; color: #ccc; letter-spacing: 2px; }
+        .nav-links a:hover { color: var(--primary); }
+        .mobile-only { display: none; }
+        .mobile-menu-btn { display: none; font-size: 1.5rem; cursor: pointer; color: white; margin-left: 20px; }
+        
+        /* --- NEW GRITTY HERO SECTION WITH IMAGE --- */
+        .hero { position: relative; width: 100%; padding-top: 70px; /* Adjust based on header height */ background-color: #000; border-bottom: 4px solid var(--primary); }
+        .hero-image-wrapper { position: relative; width: 100%; max-width: 1600px; margin: 0 auto; display: flex; justify-content: center; align-items: flex-end; }
+        .hero-main-img { width: 100%; height: auto; max-height: 85vh; object-fit: cover; display: block; filter: contrast(1.1) saturate(1.1); /* Extra pop for the graffiti */ }
+        .hero-overlay-actions { position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%); z-index: 10; width: 100%; text-align: center; }
+        .btn-hero { font-size: 1.2rem; padding: 18px 45px; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(4px); border-width: 3px; box-shadow: 6px 6px 0px var(--primary); }
+        .btn-hero:hover { background: var(--primary); box-shadow: 0px 0px 0px var(--primary); color: #000; transform: translate(-50%, 0) translateY(6px) translateX(6px); /* Keep centering while pressing down */ }
+
+        /* Academy Section */
+        .academy-section { background: url('https://via.placeholder.com/100x100/0a0a0c/111?text=+') repeat; border-bottom: 3px solid var(--secondary); }
+        .course-layout { display: grid; grid-template-columns: 1fr 1.5fr; gap: 60px; align-items: center; }
+        .featured-course-card { background: #050505; border: 3px solid #222; padding: 40px; position: relative; box-shadow: var(--box-shadow-hard); }
+        .course-price { font-size: 3rem; font-weight: 900; color: white; margin: 20px 0; text-shadow: 3px 3px 0px #000; }
+        .course-features li { margin-bottom: 12px; color: #ccc; font-size: 1rem; font-weight: 700; text-transform: uppercase; }
+        
+        /* Bio & Contact */
+        .bio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items: center; }
+        .bio-image-container { position: relative; z-index: 1; }
+        .bio-border-top { position: absolute; top: -20px; left: -20px; width: 150px; height: 150px; z-index: -1; border-top: 8px solid var(--primary); border-left: 8px solid var(--secondary); }
+        .bio-border-bottom { position: absolute; bottom: -20px; right: -20px; width: 150px; height: 150px; z-index: -1; border-bottom: 8px solid var(--accent); border-right: 8px solid var(--primary); }
+        
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
+        .contact-info-box { padding: 30px; background: #050505; border: 2px solid #222; margin-bottom: 20px; display: flex; align-items: center; gap: 20px; transition: 0.2s; box-shadow: 5px 5px 0px #111; }
+        .contact-info-box:hover { border-color: var(--secondary); box-shadow: 5px 5px 0px var(--secondary); transform: translate(-2px, -2px); }
+        .contact-icon { font-size: 1.5rem; color: var(--secondary); }
+        
+        /* LMS & Video */
+        .lms-container { display: grid; grid-template-columns: 350px 1fr; height: 100vh; padding-top: 75px; position: relative; z-index: 2; }
+        .lms-sidebar { background: #050505; border-right: 2px solid #222; display: flex; flex-direction: column; overflow: hidden; height: 100%; }
+        .lms-progress-card { padding: 20px; background: #0a0a0c; border-bottom: 2px solid #222; flex-shrink: 0; }
+        .progress-bar { width: 100%; height: 8px; background: #222; border-radius: 0px; margin-top: 10px; overflow: hidden; border: 1px solid #444;}
+        .progress-fill { width: 15%; height: 100%; background: var(--primary); }
+        .module-list { flex-grow: 1; overflow-y: auto; }
+        .lesson-item { padding: 15px 20px; cursor: pointer; border-left: 4px solid transparent; transition: 0.2s; display: flex; align-items: center; color: #888; border-bottom: 1px solid #111; font-weight: 700; text-transform: uppercase; font-size: 0.9rem;}
+        .lesson-item:hover { background: #111; color: white; }
+        .lesson-item.active { background: #0a0a0c; border-left: 4px solid var(--primary); color: var(--primary); }
+        .lms-content { padding: 40px; background: var(--bg-card); overflow-y: auto; }
+        .video-container { width: 100%; background: #000; border: 2px solid #222; margin-bottom: 30px; position: relative; aspect-ratio: 16/9; box-shadow: 10px 10px 0px #000; }
+        .resources-box { background: #050505; border: 2px solid #222; padding: 20px; margin-top: 30px; box-shadow: 6px 6px 0px #000; }
+        .resource-item { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; color: #ccc; font-weight: bold; }
+        .lms-help-footer { padding: 20px; border-top: 2px solid #222; background: #0a0a0c; flex-shrink: 0; }
+
+        /* Modals */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; }
+        .checkout-modal { background: #050505; border: 3px solid var(--primary); width: 100%; max-width: 500px; padding: 40px; box-shadow: 10px 10px 0px var(--primary); text-align: center; position: relative; }
+        .login-modal-box { background: #050505; border: 3px solid var(--secondary); width: 100%; max-width: 400px; padding: 40px; box-shadow: 10px 10px 0px var(--secondary); text-align: center; position: relative; }
+        .trailer-modal-box { background: #050505; border: 3px solid var(--accent); width: 95%; max-width: 800px; padding: 20px; box-shadow: 10px 10px 0px var(--accent); text-align: center; position: relative; }
+        
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; color: #666; transition:0.2s;}
+        .close-modal:hover { color: white; transform: scale(1.2); }
+
+        /* Trailer Overlay Styles */
+        #trailer-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8) url('https://via.placeholder.com/800x450/111/333?text=Trailer+Thumbnail') center/cover;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 10; transition: 0.3s;
+        }
+        #trailer-overlay:hover { filter: brightness(1.2); }
+        .play-btn-circle {
+            width: 80px; height: 80px; background: var(--primary); color: #000;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 30px; border: 3px solid #000; box-shadow: 4px 4px 0px #000;
+        }
+
+        @media (max-width: 900px) {
+            .mobile-only { display: block; }
+            .header-logo-text { font-size: 1.2rem; }
+            .nav-links { position: fixed; top: 0; right: -100%; height: 100vh; width: 70%; background: #050505; border-left: 3px solid var(--primary); flex-direction: column; justify-content: center; align-items: center; transition: 0.3s; z-index: 1000; }
+            .nav-links.active { right: 0; display: flex; }
+            .mobile-menu-btn { display: block; }
+            
+            .hero-overlay-actions { bottom: 5%; }
+            .btn-hero { padding: 12px 25px; font-size: 1rem; }
+            
+            .course-layout, .contact-grid { grid-template-columns: 1fr; }
+            .bio-grid { grid-template-columns: 1fr; }
+            .section-padding { padding: 50px 0; }
+            .contact-grid { gap: 30px; }
+            .lms-container { display: flex; flex-direction: column; height: auto; padding-top: 60px; }
+            .lms-content { order: 1; padding: 20px; height: auto; overflow: visible; }
+            .lms-sidebar { display: block !important; order: 2; border-right: none; border-top: 2px solid #222; height: auto; max-height: 500px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="header-logo-text">KIDBOOGIE.DANCE</div>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#courses" onclick="showSection('landing'); toggleMenu()">The Program</a></li>
+                    <li><a href="#about" onclick="showSection('landing'); toggleMenu()">About</a></li>
+                    <li><a href="#contact" onclick="showSection('landing'); toggleMenu()">Contact</a></li>
+                    <li style="margin-top:20px; font-size: 2rem; cursor:pointer;" onclick="toggleMenu()" class="mobile-only">×</li>
+                </ul>
+                <div style="display:flex; gap:15px; align-items:center;">
+                    <button id="nav-login-btn" onclick="openLoginModal()" class="btn btn-secondary" style="padding: 10px 20px; font-size: 0.8rem;">Student Login</button>
+                    <div class="mobile-menu-btn" onclick="toggleMenu()">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div id="landing-page">
+        <section class="hero" id="home">
+            <div class="hero-image-wrapper">
+                <img src="header-1.jpg" alt="Kid Boogie - The Program Popping Master Class" class="hero-main-img">
+                <div class="hero-overlay-actions">
+                    <a href="#courses" class="btn btn-primary btn-hero">LEARN MORE</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="courses" class="section-padding academy-section">
+            <div class="container">
+                <div class="course-layout">
+                    <div>
+                        <h4 style="color: var(--secondary); margin-bottom:10px;">The Master Class</h4>
+                        <h2 style="font-size: 3rem; margin-bottom: 20px;">Unlock Your <br><span class="highlight">Style</span></h2>
+                        <p style="color: #ccc; margin-bottom: 30px; font-weight: 700;">Stop guessing and start hitting. Kid Boogie breaks down his signature techniques, drills, and mindsets into a comprehensive step-by-step curriculum designed for all levels.</p>
+                    </div>
+                    <div class="featured-course-card">
+                        <h3 style="font-size: 2rem; color: white; margin-bottom: 10px;">The Program</h3>
+                        <p style="color: var(--primary); font-weight: 900;">THE DEFINITIVE POPPING MASTER CLASS</p>
+                        <div id="course-price-display" class="course-price">$99 <span style="font-size: 1rem; color: #777; font-weight: 700; text-shadow: none;">/ LIFETIME ACCESS</span></div>
+                        <ul class="course-features">
+                            <li><i class="fas fa-video" style="color:var(--secondary); margin-right:10px;"></i> HD Video Breakdowns & Drills</li>
+                            <li><i class="fas fa-bolt" style="color:var(--secondary); margin-right:10px;"></i> Advanced hitting & muscle control</li>
+                            <li><i class="fas fa-shoe-prints" style="color:var(--secondary); margin-right:10px;"></i> Footwork, gliding, and transitions</li>
+                            <li><i class="fas fa-users" style="color:var(--secondary); margin-right:10px;"></i> Private student community</li>
+                        </ul>
+                        <div id="course-cta-container" style="margin-top: 40px; display:grid; gap:15px;">
+                            <button onclick="openTrailer()" class="btn btn-outline-accent" style="width: 100%;">WATCH TRAILER</button>
+                            <button onclick="checkLoginAndPay()" class="btn btn-primary" style="width: 100%;">Enroll Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="section-padding">
+            <div class="container bio-grid">
+                <div class="bio-image-container">
+                    <div class="bio-border-top"></div>
+                    <img src="https://via.placeholder.com/600x600/111/fff?text=Kid+Boogie+Photo" alt="Kid Boogie" style="width: 100%; filter: grayscale(100%) contrast(150%); position: relative; z-index: 2; border: 4px solid #222;">
+                    <div class="bio-border-bottom"></div>
+                </div>
+                <div>
+                    <h2 style="margin-bottom: 20px;">The <span class="highlight">Master</span></h2>
+                    <p style="color: #ccc; margin-bottom: 20px; font-weight: 700;">
+                        <strong>Kid Boogie</strong> is a world-renowned dancer in the modern Popping scene. Representing the West Coast, he has traveled the globe battling, teaching, and spreading the true essence of Funk styles.
+                    </p>
+                    <p style="color: #ccc; font-weight: 700;">
+                        As long time disciple of the original Electric Boogaloos and Pop N Taco, he's known for his hard-hitting style, intricate boogaloo rolls, and musicality. "The Program" is his way of passing down decades of knowledge, ensuring the culture and foundation are preserved for the next generation of dancers.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="section-padding" style="background: var(--bg-card); border-top: 3px solid #222;">
+            <div class="container">
+                <h2 class="text-center" style="margin-bottom: 60px;">Contact <span class="highlight-alt">Kid Boogie</span></h2>
+                <div class="contact-grid">
+                    <div>
+                        <p style="color: #ccc; margin-bottom: 30px; font-weight: 700;">For serious inquiries regarding booking, workshops, judging, or brand partnerships.</p>
+                        
+                        <a href="https://instagram.com/kidboogie" target="_blank" class="contact-info-box" style="text-decoration: none; cursor: pointer;">
+                            <div class="contact-icon"><i class="fab fa-instagram"></i></div>
+                            <div>
+                                <h4 style="font-size: 1rem; color: white; margin-bottom: 5px;">Follow on Instagram</h4>
+                                <div style="color: #888; font-weight: bold;">Daily clips, updates & lifestyle</div>
+                            </div>
+                        </a>
+
+                        <a href="https://www.youtube.com/" target="_blank" class="contact-info-box" style="text-decoration: none; cursor: pointer;">
+                            <div class="contact-icon"><i class="fab fa-youtube"></i></div>
+                            <div>
+                                <h4 style="font-size: 1rem; color: white; margin-bottom: 5px;">Subscribe on YouTube</h4>
+                                <div style="color: #888; font-weight: bold;">Battles, sessions & interviews</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div>
+                        <form action="YOUR_FORMSPREE_URL" method="POST">
+                            <div class="form-group">
+                                <label class="form-label">Name</label>
+                                <input type="text" name="Name" class="form-input" placeholder="Your Name or Crew" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="Email" class="form-input" placeholder="contact@email.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Subject</label>
+                                <select name="Subject" class="form-select">
+                                    <option value="Workshop Booking">Workshop Booking</option>
+                                    <option value="Judging Request">Judging Request</option>
+                                    <option value="Sponsorship / Media">Sponsorship / Media</option>
+                                    <option value="General Inquiry">General Inquiry</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Message</label>
+                                <textarea name="Message" class="form-textarea" placeholder="Tell us about your event..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer style="background:#000; padding:60px 0; border-top:3px solid; border-image: linear-gradient(to right, var(--secondary), var(--primary), var(--accent)) 1; text-align:center; position: relative; z-index: 2;">
+            <div class="container">
+                <div style="font-family: var(--font-head); font-weight: 900; font-size: 1.5rem; color: #444; margin-bottom:20px;">KID BOOGIE</div>
+                <p style="color:#666; font-weight: bold;">&copy; 2026 Kid Boogie. All Rights Reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <div id="lms-page" class="hidden">
+        <div class="lms-container">
+            <div class="lms-sidebar">
+                <div class="lms-progress-card">
+                    <h5 style="color:white; margin-bottom:5px;">The Program</h5>
+                    <div style="font-size:0.8rem; color:#888; font-weight: bold;">STUDENT ACCESS</div>
+                    <div class="progress-bar"><div class="progress-fill"></div></div>
+                </div>
+                <div class="module-list" id="lesson-list-container"></div>
+                
+                <div class="lms-help-footer">
+                    <a href="mailto:support@kidboogie.dance?subject=Help Request - The Program" class="btn btn-secondary" style="width:100%; display:block; text-align:center;">
+                        <i class="fas fa-life-ring" style="margin-right:8px;"></i> GET HELP
+                    </a>
+                </div>
+            </div>
+            
+            <div class="lms-content">
+                <div class="video-container">
+                    <div id="video-display"></div>
+                </div>
+                <div class="lesson-header" style="border-bottom: 2px solid #222; padding-bottom:20px;">
+                    <h2 id="lesson-title">Welcome</h2>
+                    <p id="lesson-desc" style="color: #888; font-weight: bold;">Select a lesson to begin.</p>
+                </div>
+                <div class="resources-box">
+                    <h4 style="color:white; margin-bottom:15px;">Resources</h4>
+                    <div class="resource-item" style="color:#888;">Files and links for this lesson will appear here.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="checkout-modal" class="modal-overlay">
+        <div class="checkout-modal">
+            <div class="close-modal" onclick="closeCheckout()">×</div>
+            <h3>Secure Checkout</h3>
+            
+            <div id="checkout-price-display" style="font-size: 1.8rem; font-weight:900; color:white; margin:15px 0;">Total: $99.00</div>
+            
+            <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
+                <input type="text" id="promo-input" placeholder="Promo Code" style="padding:10px; border-radius:2px; border:2px solid #333; background:#111; color:white; text-transform:uppercase; font-weight: bold;">
+                <button onclick="applyCoupon()" class="btn btn-secondary" style="padding:10px 20px; font-size:0.8rem;">APPLY</button>
+            </div>
+            <div id="coupon-message" style="margin-bottom:20px; font-size:0.9rem; min-height:1.2em; font-weight: bold;"></div>
+            
+            <div id="paypal-button-container"></div>
+            <button id="free-unlock-btn" onclick="unlockFreeCourse()" class="btn btn-primary hidden" style="width:100%; margin-top:20px;">UNLOCK COURSE FOR FREE</button>
+        </div>
+    </div>
+    
+    <div id="login-modal" class="modal-overlay">
+        <div class="login-modal-box">
+            <div class="close-modal" onclick="closeLoginModal()">×</div>
+            <h3 id="auth-title">Student Login</h3>
+            
+            <input type="text" id="student-name" class="form-input hidden" placeholder="Full Name" style="margin-bottom:15px;">
+            <input type="email" id="student-email" class="form-input" placeholder="Email" style="margin-bottom:15px;">
+            
+            <div class="password-container" style="margin-bottom:15px;">
+                <input type="password" id="student-pass" class="form-input" placeholder="Password">
+                <i class="fas fa-eye password-toggle-icon" onclick="togglePassword('student-pass')"></i>
+            </div>
+
+            <div id="confirm-pass-container" class="password-container hidden" style="margin-bottom:15px;">
+                <input type="password" id="student-pass-confirm" class="form-input" placeholder="Confirm Password">
+                <i class="fas fa-eye password-toggle-icon" onclick="togglePassword('student-pass-confirm')"></i>
+            </div>
+
+            <button id="auth-action-btn" onclick="handleAuthAction()" class="btn btn-secondary" style="width:100%">Log In</button>
+            
+            <div style="margin-top:15px; font-size:0.9rem; color:#888; font-weight: bold;">
+                <span id="auth-toggle-text">Need an account?</span> 
+                <a href="#" onclick="toggleAuthMode()" style="color:var(--primary);">Click Here</a>
+            </div>
+            
+            <p id="login-error" style="color:var(--accent); margin-top:10px; font-weight: bold;"></p>
+        </div>
+    </div>
+    
+    <div id="trailer-modal" class="modal-overlay">
+        <div class="trailer-modal-box">
+            <div class="close-modal" onclick="closeTrailer()">×</div>
+            <h3 style="margin-bottom: 15px; text-transform:uppercase; color:white;">Course Preview</h3>
+            
+            <div id="trailer-wrapper" style="position:relative; padding:56.25% 0 0 0;">
+                <iframe id="trailer-video-frame" src="https://player.vimeo.com/video/YOUR_TRAILER_ID_HERE?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Course Trailer"></iframe>
+                
+                <div id="trailer-overlay" onclick="playTrailerWithSound()">
+                    <div class="play-btn-circle"><i class="fas fa-play" style="margin-left: 5px;"></i></div>
+                    <div style="margin-top:15px; font-weight:900; letter-spacing: 1px;">WATCH TRAILER</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID_HERE&currency=USD"></script>
+    
+    <script>
+        // --- API KEYS: REPLACE THESE WITH YOUR HOSTINGER/SUPABASE KEYS ---
+        const supabaseUrl = 'YOUR_SUPABASE_URL_HERE';
+        const supabaseKey = 'YOUR_SUPABASE_ANON_KEY_HERE';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        const basePrice = '99.00'; 
+        let currentPrice = basePrice;
+
+        // --- AUTH LOGIC ---
+        let isSignupMode = false;
+
+        function toggleAuthMode() {
+            isSignupMode = !isSignupMode;
+            const title = document.getElementById('auth-title');
+            const nameInput = document.getElementById('student-name');
+            const confirmContainer = document.getElementById('confirm-pass-container');
+            const actionBtn = document.getElementById('auth-action-btn');
+            const toggleText = document.getElementById('auth-toggle-text');
+            const errorMsg = document.getElementById('login-error');
+
+            errorMsg.innerText = "";
+
+            if (isSignupMode) {
+                title.innerText = "Create Account";
+                nameInput.classList.remove('hidden');
+                confirmContainer.classList.remove('hidden');
+                actionBtn.innerText = "Register";
+                actionBtn.classList.remove('btn-secondary');
+                actionBtn.classList.add('btn-primary');
+                toggleText.innerHTML = "Have an account? ";
+            } else {
+                title.innerText = "Student Login";
+                nameInput.classList.add('hidden');
+                confirmContainer.classList.add('hidden');
+                actionBtn.innerText = "Log In";
+                actionBtn.classList.remove('btn-primary');
+                actionBtn.classList.add('btn-secondary');
+                toggleText.innerHTML = "Need an account? ";
+            }
+        }
+
+        function togglePassword(fieldId) {
+            const input = document.getElementById(fieldId);
+            if (input.type === "password") { input.type = "text"; } 
+            else { input.type = "password"; }
+        }
+
+        async function handleAuthAction() {
+            if (isSignupMode) { await attemptSignUp(); } 
+            else { await attemptLogin(); }
+        }
+
+        async function attemptLogin() {
+            const email = document.getElementById('student-email').value;
+            const password = document.getElementById('student-pass').value;
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            
+            if (!error) {
+                closeLoginModal();
+                updateCourseUI(data.user);
+                updateNavButton({ user: data.user });
+                if (window.pendingCheckout) {
+                    openCheckout();
+                    window.pendingCheckout = false;
+                }
+            } else {
+                document.getElementById('login-error').innerText = error.message;
+            }
+        }
+
+        async function attemptSignUp() {
+            const name = document.getElementById('student-name').value;
+            const email = document.getElementById('student-email').value;
+            const password = document.getElementById('student-pass').value;
+            const confirm = document.getElementById('student-pass-confirm').value;
+            
+            if (!email || !password || !name) {
+                document.getElementById('login-error').innerText = "Please fill in all fields.";
+                return;
+            }
+            if (password !== confirm) {
+                document.getElementById('login-error').innerText = "Passwords do not match.";
+                return;
+            }
+
+            const { data, error } = await supabaseClient.auth.signUp({
+                email: email,
+                password: password,
+                options: { data: { full_name: name } }
+            });
+
+            if (error) {
+                document.getElementById('login-error').innerText = error.message;
+                return;
+            }
+
+            if (data.user && !data.session) {
+                alert("Registration successful! \n\nPlease check your email to confirm your account before logging in.");
+                closeLoginModal();
+                return;
+            }
+
+            alert("Account created! You are now logged in.");
+            closeLoginModal();
+            updateCourseUI(data.user);
+            updateNavButton({ user: data.user });
+
+            if (window.pendingCheckout) {
+                openCheckout();
+                window.pendingCheckout = false;
+            }
+        }
+
+        // --- TRAILER LOGIC ---
+        let trailerPlayer = null;
+
+        function openTrailer() {
+            document.getElementById('trailer-modal').style.display = 'flex';
+            document.getElementById('trailer-overlay').style.display = 'flex';
+            if (!trailerPlayer) {
+                trailerPlayer = new Vimeo.Player(document.querySelector('#trailer-video-frame'));
+            }
+        }
+        
+        function playTrailerWithSound() {
+            document.getElementById('trailer-overlay').style.display = 'none';
+            if(trailerPlayer) {
+                trailerPlayer.setVolume(1).then(() => { trailerPlayer.play(); });
+            }
+        }
+
+        function closeTrailer() {
+            document.getElementById('trailer-modal').style.display = 'none';
+            if (trailerPlayer) { trailerPlayer.pause(); }
+        }
+
+        // --- CHECKOUT LOGIC ---
+        function applyCoupon() {
+            const input = document.getElementById('promo-input');
+            const message = document.getElementById('coupon-message');
+            const priceDisplay = document.getElementById('checkout-price-display');
+            const paypalBtn = document.getElementById('paypal-button-container');
+            const freeBtn = document.getElementById('free-unlock-btn');
+            
+            const code = input.value.trim().toUpperCase();
+
+            paypalBtn.style.display = 'block';
+            freeBtn.classList.add('hidden');
+
+            if (code === 'BOOGIE20') {
+                const numPrice = parseFloat(basePrice);
+                currentPrice = (numPrice * 0.80).toFixed(2);
+                message.style.color = 'var(--primary)';
+                message.innerText = "20% DISCOUNT APPLIED!";
+                priceDisplay.innerHTML = `Total: <span style="text-decoration:line-through; color:#666; font-size:1rem;">$${basePrice}</span> $${currentPrice}`;
+            
+            } else if (code === 'GUESTLIST') {
+                currentPrice = 0;
+                message.style.color = 'var(--secondary)';
+                message.innerText = "VIP ACCESS GRANTED!";
+                priceDisplay.innerHTML = `Total: <span style="text-decoration:line-through; color:#666; font-size:1rem;">$${basePrice}</span> $0.00`;
+                paypalBtn.style.display = 'none';
+                freeBtn.classList.remove('hidden');
+
+            } else {
+                message.style.color = 'var(--accent)';
+                message.innerText = "INVALID PROMO CODE";
+                currentPrice = basePrice;
+                priceDisplay.innerText = "Total: $" + basePrice;
+            }
+        }
+
+        async function unlockFreeCourse() {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (user) {
+                await supabaseClient.from('profiles').update({ has_access: true }).eq('id', user.id);
+                alert("Course Unlocked! Welcome to The Program."); 
+                closeCheckout(); 
+                updateCourseUI(user);
+                showSection('lms');
+            } else {
+                alert("Error: You must be logged in.");
+            }
+        }
+
+        function resetCheckout() {
+            currentPrice = basePrice;
+            document.getElementById('promo-input').value = "";
+            document.getElementById('coupon-message').innerText = "";
+            document.getElementById('checkout-price-display').innerText = "Total: $" + basePrice;
+            document.getElementById('paypal-button-container').style.display = 'block';
+            document.getElementById('free-unlock-btn').classList.add('hidden');
+        }
+
+        // --- LMS DATA (DANCE MODULES) ---
+        const lessonData = [
+            { 
+                id: "PLACEHOLDER_VIMEO_ID",
+                h: "PLACEHOLDER_HASH",
+                title: "SECTION 1", 
+                desc: "INTRODUCTION TO POPPING",
+                details: `1.1 MEET KID BOOGIE - 1.2 HISTORY OF THE STYLE - 1.3 THE MINDSET - 1.4 STRETCHING & WARMUPS`,
+                downloadLink: "#", 
+                downloadName: "No Download"
+            },
+            { 
+                id: "PLACEHOLDER_VIMEO_ID",
+                h: "PLACEHOLDER_HASH", 
+                title: "SECTION 2", 
+                desc: "THE FOUNDATION: HITTING",
+                details: `2.1 THE MUSCLE CONTRACTION - 2.2 LEVELS OF INTENSITY - 2.3 ARM HITS - 2.4 LEG & CHEST HITS - 2.5 TIMING DRILLS`,
+                downloadLink: "#", 
+                downloadName: "No Download"
+            },
+            { 
+                id: "PLACEHOLDER_VIMEO_ID",
+                h: "PLACEHOLDER_HASH", 
+                title: "SECTION 3", 
+                desc: "BOOGALOO ESSENTIALS",
+                details: `3.1 ROLLS & GROOVES - 3.2 THE OLD MAN - 3.3 TWIST O FLEX - 3.4 NECK O FLEX`,
+                downloadLink: "#", 
+                downloadName: "No Download"
+            },
+            { 
+                id: "PLACEHOLDER_VIMEO_ID",
+                h: "PLACEHOLDER_HASH", 
+                title: "SECTION 4", 
+                desc: "WAVING & ISOLATIONS",
+                details: `4.1 THE 12-POINT ARM WAVE - 4.2 BODY WAVING - 4.3 TRACING - 4.4 DIMED STOPS`,
+                downloadLink: "#", 
+                downloadName: "No Download"
+            },
+            { 
+                id: "PLACEHOLDER_VIMEO_ID",
+                h: "PLACEHOLDER_HASH", 
+                title: "SECTION 5", 
+                desc: "FOOTWORK & GLIDES",
+                details: `5.1 SLIDES & FLOATS - 5.2 THE MOONWALK - 5.3 SIDE GLIDES - 5.4 HEEL TOE CONCEPTS`,
+                downloadLink: "#", 
+                downloadName: "No Download"
+            },
+            { 
+                id: "PLACEHOLDER_VIMEO_ID",
+                h: "PLACEHOLDER_HASH", 
+                title: "SECTION 6", 
+                desc: "FREESTYLE & MUSICALITY",
+                details: `6.1 LISTENING TO THE FUNK - 6.2 CREATING COMBOS - 6.3 BATTLE STRATEGIES - 6.4 WRAP UP`,
+                downloadLink: "#", 
+                downloadName: "No Download"
+            }
+        ];
+
+        // --- LMS PLAYER ---
+        const lessonList = document.getElementById('lesson-list-container');
+        if (lessonList) {
+            lessonData.forEach((lesson, index) => {
+                const div = document.createElement('div');
+                div.className = 'lesson-item';
+                div.innerHTML = `<div><i class="fas fa-play-circle" style="margin-right:10px;"></i> ${lesson.title}</div>`;
+                div.onclick = () => { loadLesson(index); };
+                lessonList.appendChild(div);
+            });
+        }
+
+        let vimeoPlayer = null;
+
+        function loadLesson(index) {
+            const lesson = lessonData[index];
+            updateLessonText(index);
+
+            if (vimeoPlayer) {
+                vimeoPlayer.destroy().then(() => { createPlayer(lesson); });
+            } else {
+                createPlayer(lesson);
+            }
+        }
+
+        function createPlayer(lesson) {
+            const container = document.getElementById('video-display');
+            if(container) {
+                container.innerHTML = ""; 
+                const videoUrl = `https://vimeo.com/${lesson.id}/${lesson.h || ''}`;
+                
+                vimeoPlayer = new Vimeo.Player('video-display', {
+                    url: videoUrl,
+                    responsive: true,
+                    autoplay: false,
+                    muted: false,
+                    controls: true
+                });
+            }
+        }
+
+        function initVimeo() { loadLesson(0); }
+
+        function updateLessonText(index) {
+            const lesson = lessonData[index];
+            document.getElementById('lesson-title').innerText = lesson.title;
+            document.getElementById('lesson-desc').innerText = lesson.desc;
+
+            let detailsContainer = document.getElementById('lesson-details-text');
+            if(!detailsContainer) {
+                const header = document.querySelector('.lesson-header');
+                detailsContainer = document.createElement('p');
+                detailsContainer.id = 'lesson-details-text';
+                detailsContainer.style.marginTop = "20px";
+                detailsContainer.style.color = "#ccc";
+                detailsContainer.style.fontWeight = "bold";
+                detailsContainer.style.lineHeight = "1.6";
+                header.appendChild(detailsContainer);
+            }
+            detailsContainer.innerHTML = lesson.details || "";
+
+            const resourceBox = document.querySelector('.resources-box');
+            if (lesson.downloadLink && lesson.downloadLink !== "#") {
+                resourceBox.innerHTML = `
+                    <h4 style="color:white; margin-bottom:15px;">Downloads</h4>
+                    <div class="resource-item">
+                        <i class="fas fa-file-download" style="color:var(--primary);"></i>
+                        <div style="color:white; margin-left:10px;">${lesson.downloadName}</div>
+                        <a href="${lesson.downloadLink}" target="_blank" class="btn btn-secondary" style="margin-left:auto; padding: 5px 15px; font-size: 0.8rem;">Download</a>
+                    </div>
+                `;
+            } else {
+                resourceBox.innerHTML = `<h4 style="color:white; margin-bottom:15px;">Downloads</h4><p style="color:#666;">No downloads available for this lesson.</p>`;
+            }
+
+            document.querySelectorAll('.lesson-item').forEach((el, i) => {
+                if (i === index) el.classList.add('active');
+                else el.classList.remove('active');
+            });
+        }
+
+        // --- AUTH & NAV VISIBILITY ---
+        async function showSection(sectionId) {
+            document.getElementById('landing-page').classList.add('hidden');
+            document.getElementById('lms-page').classList.add('hidden');
+            
+            if(sectionId === 'landing') {
+                document.getElementById('landing-page').classList.remove('hidden');
+            } else if(sectionId === 'lms') {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if(session) {
+                    const { data: profile } = await supabaseClient.from('profiles').select('has_access').eq('id', session.user.id).single();
+                    if (profile && profile.has_access) {
+                        document.getElementById('lms-page').classList.remove('hidden');
+                        initVimeo();
+                    } else {
+                        alert("Please purchase the course to access.");
+                        showSection('landing');
+                    }
+                } else {
+                    alert("Please log in.");
+                    showSection('landing');
+                    openLoginModal();
+                }
+            }
+        }
+
+        async function updateCourseUI(user) {
+            const priceDisplay = document.getElementById('course-price-display');
+            const ctaContainer = document.getElementById('course-cta-container');
+            if (user) {
+                const { data: profile } = await supabaseClient.from('profiles').select('has_access').eq('id', user.id).single();
+                if (profile && profile.has_access) {
+                    // Paid
+                    if(priceDisplay) priceDisplay.style.display = 'none';
+                    if(ctaContainer) ctaContainer.innerHTML = `<button onclick="showSection('lms')" class="btn btn-primary" style="width:100%">ENTER COURSE</button>`;
+                } else {
+                    // Logged in, not paid
+                    if(ctaContainer) ctaContainer.innerHTML = `
+                        <button onclick="openTrailer()" class="btn btn-outline-accent" style="width: 100%;">WATCH TRAILER</button>
+                        <button onclick="checkLoginAndPay()" class="btn btn-primary" style="width: 100%;">Enroll Now</button>
+                    `;
+                }
+            } else {
+                // Guest
+                 if(ctaContainer) ctaContainer.innerHTML = `
+                    <button onclick="openTrailer()" class="btn btn-outline-accent" style="width: 100%;">WATCH TRAILER</button>
+                    <button onclick="checkLoginAndPay()" class="btn btn-primary" style="width: 100%;">Enroll Now</button>
+                `;
+            }
+        }
+
+        function updateNavButton(session) {
+            const btn = document.getElementById('nav-login-btn');
+            if (session && session.user) {
+                btn.innerText = "LOG OUT";
+                btn.onclick = async () => { 
+                    await supabaseClient.auth.signOut(); 
+                    window.location.reload(); 
+                };
+            } else {
+                btn.innerText = "Student Login";
+                btn.onclick = openLoginModal;
+            }
+        }
+
+        // --- MODAL UTILS ---
+        function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
+        function openLoginModal() { 
+            isSignupMode = true; 
+            toggleAuthMode();
+            document.getElementById('login-modal').style.display = 'flex'; 
+        }
+        function closeLoginModal() { document.getElementById('login-modal').style.display = 'none'; }
+        
+        async function checkLoginAndPay() {
+             const { data: { session } } = await supabaseClient.auth.getSession();
+             if (session) {
+                 openCheckout();
+             } else {
+                 window.pendingCheckout = true; 
+                 openLoginModal();
+                 document.getElementById('login-error').innerText = "Please create an account or log in to purchase.";
+             }
+        }
+
+        function openCheckout() { 
+            resetCheckout(); 
+            document.getElementById('checkout-modal').style.display = 'flex'; 
+        }
+        function closeCheckout() { document.getElementById('checkout-modal').style.display = 'none'; }
+        
+        // --- INIT ---
+        supabaseClient.auth.getSession().then(({ data: { session } }) => {
+            if(session) {
+                updateCourseUI(session.user);
+                updateNavButton(session);
+            }
+        });
+        
+        // --- PAYPAL ---
+        if(document.getElementById('paypal-button-container')) {
+             paypal.Buttons({
+                createOrder: (data, actions) => {
+                    return actions.order.create({
+                        application_context: { shipping_preference: 'NO_SHIPPING' },
+                        purchase_units: [{
+                            description: 'The Program - Digital Master Class',
+                            amount: {
+                                currency_code: 'USD',
+                                value: currentPrice,
+                                breakdown: {
+                                    item_total: { currency_code: 'USD', value: currentPrice }
+                                }
+                            },
+                            items: [{
+                                name: 'The Program by Kid Boogie',
+                                description: 'Lifetime access to the popping master class.',
+                                unit_amount: { currency_code: 'USD', value: currentPrice },
+                                quantity: '1',
+                                category: 'DIGITAL_GOODS'
+                            }]
+                        }]
+                    });
+                },
+                onApprove: async (data, actions) => {
+                    await actions.order.capture();
+                    const { data: { user } } = await supabaseClient.auth.getUser();
+                    
+                    if (user) {
+                        await supabaseClient.from('profiles').update({ has_access: true }).eq('id', user.id);
+                        
+                        // REPLACE EMAILJS KEYS HERE
+                        emailjs.send(
+                            'YOUR_SERVICE_ID',
+                            'YOUR_TEMPLATE_ID',
+                            {
+                                student_email: user.email,
+                                student_name: user.user_metadata.full_name || "there" 
+                            },
+                            'YOUR_PUBLIC_KEY' 
+                        );
+
+                        alert("Payment successful! Welcome to The Program."); 
+                        closeCheckout(); 
+                        updateCourseUI(user);
+                        showSection('lms');
+                    } else {
+                        alert("Please log in before purchasing to save your progress.");
+                        closeCheckout();
+                        openLoginModal();
+                    }
+                }
+            }).render('#paypal-button-container');
+        }
+    </script>
+</body>
+</html>
