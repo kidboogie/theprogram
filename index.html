@@ -94,13 +94,39 @@
         .mobile-only { display: none; }
         .mobile-menu-btn { display: none; font-size: 1.5rem; cursor: pointer; color: white; margin-left: 20px; }
         
-        /* --- NEW GRITTY HERO SECTION WITH IMAGE --- */
-        .hero { position: relative; width: 100%; padding-top: 70px; /* Adjust based on header height */ background-color: #000; border-bottom: 4px solid var(--primary); }
+        /* --- GRITTY HERO SECTION WITH IMAGE --- */
+        .hero { position: relative; width: 100%; padding-top: 70px; background-color: #000; border-bottom: 4px solid var(--primary); }
         .hero-image-wrapper { position: relative; width: 100%; max-width: 1600px; margin: 0 auto; display: flex; justify-content: center; align-items: flex-end; }
-        .hero-main-img { width: 100%; height: auto; max-height: 85vh; object-fit: cover; display: block; filter: contrast(1.1) saturate(1.1); /* Extra pop for the graffiti */ }
-        .hero-overlay-actions { position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%); z-index: 10; width: 100%; text-align: center; }
-        .btn-hero { font-size: 1.2rem; padding: 18px 45px; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(4px); border-width: 3px; box-shadow: 6px 6px 0px var(--primary); }
-        .btn-hero:hover { background: var(--primary); box-shadow: 0px 0px 0px var(--primary); color: #000; transform: translate(-50%, 0) translateY(6px) translateX(6px); /* Keep centering while pressing down */ }
+        .hero-main-img { width: 100%; height: auto; max-height: 85vh; object-fit: cover; display: block; filter: contrast(1.1) saturate(1.1); }
+        
+        /* REPOSITIONED AND RESTYLED HERO BUTTON */
+        .hero-overlay-actions { 
+            position: absolute; 
+            top: 22%; /* Aligns it below Kid Boogie in the top left */
+            left: 8%; /* Keeps it anchored to the left */
+            z-index: 10; 
+            text-align: left; 
+        }
+        
+        .btn-hero { 
+            font-size: 1.2rem; 
+            padding: 16px 40px; 
+            background: rgba(5, 5, 5, 0.9); 
+            backdrop-filter: blur(4px); 
+            border-width: 3px; 
+            border-color: var(--secondary); /* Swapped to gold/yellow */
+            color: var(--secondary);
+            box-shadow: 6px 6px 0px var(--secondary); 
+            transition: all 0.2s ease;
+            transform: translate(0, 0); /* Fixes the jitter */
+        }
+        
+        .btn-hero:hover { 
+            background: var(--secondary); 
+            color: #000; 
+            box-shadow: 0px 0px 0px var(--secondary); 
+            transform: translate(6px, 6px); /* Clean push-down effect */
+        }
 
         /* Academy Section */
         .academy-section { background: url('https://via.placeholder.com/100x100/0a0a0c/111?text=+') repeat; border-bottom: 3px solid var(--secondary); }
@@ -166,8 +192,10 @@
             .nav-links.active { right: 0; display: flex; }
             .mobile-menu-btn { display: block; }
             
-            .hero-overlay-actions { bottom: 5%; }
-            .btn-hero { padding: 12px 25px; font-size: 1rem; }
+            /* Responsive Hero Button Adjustments */
+            .hero-overlay-actions { top: 15%; left: 5%; }
+            .btn-hero { padding: 10px 20px; font-size: 0.9rem; border-width: 2px; box-shadow: 4px 4px 0px var(--secondary); }
+            .btn-hero:hover { transform: translate(4px, 4px); }
             
             .course-layout, .contact-grid { grid-template-columns: 1fr; }
             .bio-grid { grid-template-columns: 1fr; }
