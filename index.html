@@ -102,8 +102,9 @@
         /* REPOSITIONED AND RESTYLED HERO BUTTON */
         .hero-overlay-actions { 
             position: absolute; 
-            top: 22%; /* Aligns it below Kid Boogie in the top left */
-            left: 8%; /* Keeps it anchored to the left */
+            top: 55%; /* Pushed down to the left center of the image */
+            left: 8%; /* Keeps it anchored safely to the left */
+            transform: translateY(-50%); /* Keeps the button vertically centered on its Y-axis */
             z-index: 10; 
             text-align: left; 
         }
@@ -118,7 +119,6 @@
             color: var(--secondary);
             box-shadow: 6px 6px 0px var(--secondary); 
             transition: all 0.2s ease;
-            transform: translate(0, 0); /* Fixes the jitter */
         }
         
         .btn-hero:hover { 
@@ -193,7 +193,7 @@
             .mobile-menu-btn { display: block; }
             
             /* Responsive Hero Button Adjustments */
-            .hero-overlay-actions { top: 15%; left: 5%; }
+            .hero-overlay-actions { top: 60%; left: 5%; transform: translateY(-50%); }
             .btn-hero { padding: 10px 20px; font-size: 0.9rem; border-width: 2px; box-shadow: 4px 4px 0px var(--secondary); }
             .btn-hero:hover { transform: translate(4px, 4px); }
             
