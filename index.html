@@ -340,8 +340,8 @@
             <div class="container">
                 <div style="font-family: var(--font-head); font-weight: 900; font-size: 1.5rem; color: #444; margin-bottom:20px;">KID BOOGIE</div>
                 <div style="margin-bottom: 25px; font-weight: bold; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
-                    <a href="#" onclick="openPrivacyModal()" style="color: var(--text-muted); margin: 0 15px; transition: 0.2s;">Privacy Policy</a> | 
-                    <a href="#" onclick="openTermsModal()" style="color: var(--text-muted); margin: 0 15px; transition: 0.2s;">Terms of Service</a>
+                    <a href="privacy.html" style="color: var(--text-muted); margin: 0 15px; transition: 0.2s;">Privacy Policy</a> | 
+                    <a href="terms.html" style="color: var(--text-muted); margin: 0 15px; transition: 0.2s;">Terms of Service</a>
                 </div>
                 <p style="color:#666; font-weight: bold;">&copy; 2026 Boogie Bruthaz LLC. All Rights Reserved.</p>
             </div>
@@ -378,29 +378,6 @@
                     <div class="resource-item" style="color:#888;">Files and links for this lesson will appear here.</div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Modals -->
-    <div id="privacy-modal" class="modal-overlay">
-        <div class="checkout-modal" style="max-width: 650px; text-align: left; max-height: 80vh; overflow-y: auto;">
-            <div class="close-modal" onclick="closePrivacyModal()">×</div>
-            <h3 style="margin-bottom: 20px; color: var(--primary);">Privacy Policy</h3>
-            <p style="color: #ccc; margin-bottom: 15px; font-weight: bold;">Your privacy is important to us. It is our policy to respect your privacy regarding any information we may collect from you across our website, <span style="color: var(--primary);">https://kidboogie.dance</span>, and other sites we own and operate.</p>
-            <p style="color: #ccc; margin-bottom: 15px; font-weight: bold;">We only ask for personal information when we truly need it to provide a service to you (such as setting up your student profile or processing checkout details). We collect it by fair and lawful means, with your full knowledge and consent.</p>
-            <p style="color: #ccc; margin-bottom: 15px; font-weight: bold;">We only retain collected information for as long as necessary to provide you with your requested service. What data we store, we will protect within commercially acceptable means to prevent loss and theft, as well as unauthorized access, disclosure, copying, use, or modification.</p>
-            <p style="color: #ccc; font-weight: bold;">Your continued use of our website will be regarded as acceptance of our practices around privacy and personal information. If you have any questions about how we handle user data and personal information, feel free to contact us through our general inquiry channel.</p>
-        </div>
-    </div>
-
-    <div id="terms-modal" class="modal-overlay">
-        <div class="checkout-modal" style="max-width: 650px; text-align: left; max-height: 80vh; overflow-y: auto;">
-            <div class="close-modal" onclick="closeTermsModal()">×</div>
-            <h3 style="margin-bottom: 20px; color: var(--secondary);">Terms of Service</h3>
-            <p style="color: #ccc; margin-bottom: 15px; font-weight: bold;">1. Terms: By accessing the website at <span style="color: var(--secondary);">https://kidboogie.dance</span>, you are agreeing to be bound by these terms of service, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws.</p>
-            <p style="color: #ccc; margin-bottom: 15px; font-weight: bold;">2. Use License: Permission is granted to temporarily view the master class materials (video content and resources) on Kid Boogie's website for personal, non-commercial transitory learning purposes only. This is the grant of a access license, not a transfer of title, and under this license you may not copy, rip, or redistribute the video assets.</p>
-            <p style="color: #ccc; margin-bottom: 15px; font-weight: bold;">3. Digital Goods & Refunds: "The Program" is an instant-access digital course asset. Due to the immediate delivery of digital materials upon checkout completion, all sales are considered final. Refund requests are handled entirely on an individual case-by-case basis through our payment processing merchant framework.</p>
-            <p style="color: #ccc; font-weight: bold;">4. Revisions & Content: The materials appearing on the website could include technical, typographical, or photographic errors. We do not warrant that any of the materials on its website are accurate, complete or current. We may make changes to the materials contained on its website at any time without notice.</p>
         </div>
     </div>
 
@@ -917,12 +894,6 @@
             document.getElementById('login-modal').style.display = 'flex'; 
         }
         function closeLoginModal() { document.getElementById('login-modal').style.display = 'none'; }
-        
-        // Modal helpers for Privacy and Terms
-        function openPrivacyModal() { document.getElementById('privacy-modal').style.display = 'flex'; }
-        function closePrivacyModal() { document.getElementById('privacy-modal').style.display = 'none'; }
-        function openTermsModal() { document.getElementById('terms-modal').style.display = 'flex'; }
-        function closeTermsModal() { document.getElementById('terms-modal').style.display = 'none'; }
         
         async function checkLoginAndPay() {
              const { data: { session } } = await supabaseClient.auth.getSession();
