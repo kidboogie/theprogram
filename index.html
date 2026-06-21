@@ -171,20 +171,6 @@
         .close-modal { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; color: #666; transition:0.2s;}
         .close-modal:hover { color: white; transform: scale(1.2); }
 
-        /* Trailer Overlay Styles */
-        #trailer-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8) url('https://via.placeholder.com/800x450/111/333?text=Trailer+Thumbnail') center/cover;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; z-index: 10; transition: 0.3s;
-        }
-        #trailer-overlay:hover { filter: brightness(1.2); }
-        .play-btn-circle {
-            width: 80px; height: 80px; background: var(--primary); color: #000;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 30px; border: 3px solid #000; box-shadow: 4px 4px 0px #000;
-        }
-
         @media (max-width: 900px) {
             .mobile-only { display: block; }
             .header-logo-text { font-size: 1.2rem; }
@@ -428,19 +414,13 @@
         </div>
     </div>
     
-<div id="trailer-modal" class="modal-overlay">
+    <div id="trailer-modal" class="modal-overlay">
         <div class="trailer-modal-box">
             <div class="close-modal" onclick="closeTrailer()">×</div>
             <h3 style="margin-bottom: 15px; text-transform:uppercase; color:white;">Course Preview</h3>
             
             <div id="trailer-wrapper" style="position:relative; padding:56.25% 0 0 0;">
-                <!-- Updated iframe with controls=0 -->
                 <iframe id="trailer-video-frame" src="https://player.vimeo.com/video/1196800708?h=41793185e7&badge=0&autopause=0&player_id=0&app_id=58479&controls=0&title=0&byline=0&portrait=0" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Course Trailer"></iframe>
-                
-                <div id="trailer-overlay" onclick="playTrailerWithSound()">
-                    <div class="play-btn-circle"><i class="fas fa-play" style="margin-left: 5px;"></i></div>
-                    <div style="margin-top:15px; font-weight:900; letter-spacing: 1px;">WATCH TRAILER</div>
-                </div>
             </div>
         </div>
     </div>
@@ -561,40 +541,45 @@
             }
         }
 
-// --- TRAILER LOGIC ---
+        // --- TRAILER LOGIC ---
         let trailerPlayer = null;
 
         function openTrailer() {
+            // 1. Show the modal
             document.getElementById('trailer-modal').style.display = 'flex';
-            document.getElementById('trailer-overlay').style.display = 'flex';
             
+            // 2. Connect the Vimeo Player
+            const iframe = document.getElementById('trailer-video-frame');
             if (!trailerPlayer) {
-                const iframe = document.getElementById('trailer-video-frame');
                 trailerPlayer = new Vimeo.Player(iframe);
             }
-        }
-        
-        function playTrailerWithSound() {
-            document.getElementById('trailer-overlay').style.display = 'none';
-            if(trailerPlayer) {
-                // Plays immediately on the user's click gesture
+            
+            // 3. Play immediately! Because they just clicked the "Watch Trailer" 
+            // button on the page, the browser allows this to bypass the blocker.
+            trailerPlayer.ready().then(function() {
                 trailerPlayer.play().catch(function(error) {
-                    console.error("Browser blocked autoplay:", error);
+                    console.error("Autoplay prevented:", error);
                 });
-            }
+            });
         }
 
         function closeTrailer() {
+            // 1. Hide the modal
             document.getElementById('trailer-modal').style.display = 'none';
-            document.getElementById('trailer-overlay').style.display = 'flex'; // Reset the custom overlay
             
-            // Bulletproof reset: Wipes the iframe source to instantly kill background audio, then restores it
-            const iframe = document.getElementById('trailer-video-frame');
-            const currentSrc = iframe.src;
-            iframe.src = ''; 
-            setTimeout(() => { iframe.src = currentSrc; }, 50); 
-            
-            trailerPlayer = null; // Clear the player memory for the next open
+            // 2. Cleanly pause and rewind the video so it's ready for next time
+            if (trailerPlayer) {
+                trailerPlayer.pause().then(function() {
+                    trailerPlayer.setCurrentTime(0);
+                }).catch(function() {
+                    // Fallback to instantly kill audio if the API lags
+                    const iframe = document.getElementById('trailer-video-frame');
+                    const currentSrc = iframe.src;
+                    iframe.src = '';
+                    setTimeout(() => { iframe.src = currentSrc; }, 50);
+                    trailerPlayer = null;
+                });
+            }
         }
 
         // --- CHECKOUT LOGIC ---
