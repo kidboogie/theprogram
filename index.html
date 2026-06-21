@@ -428,13 +428,14 @@
         </div>
     </div>
     
-    <div id="trailer-modal" class="modal-overlay">
+<div id="trailer-modal" class="modal-overlay">
         <div class="trailer-modal-box">
             <div class="close-modal" onclick="closeTrailer()">×</div>
             <h3 style="margin-bottom: 15px; text-transform:uppercase; color:white;">Course Preview</h3>
             
             <div id="trailer-wrapper" style="position:relative; padding:56.25% 0 0 0;">
-                <iframe id="trailer-video-frame" src="https://player.vimeo.com/video/1203278467?h=e2e8095d51&badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Course Trailer"></iframe>
+                <!-- Updated iframe with controls=0 -->
+                <iframe id="trailer-video-frame" src="https://player.vimeo.com/video/1196800708?h=41793185e7&badge=0&autopause=0&player_id=0&app_id=58479&controls=0&title=0&byline=0&portrait=0" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Course Trailer"></iframe>
                 
                 <div id="trailer-overlay" onclick="playTrailerWithSound()">
                     <div class="play-btn-circle"><i class="fas fa-play" style="margin-left: 5px;"></i></div>
@@ -560,32 +561,40 @@
             }
         }
 
-        // --- TRAILER LOGIC ---
+// --- TRAILER LOGIC ---
         let trailerPlayer = null;
 
         function openTrailer() {
             document.getElementById('trailer-modal').style.display = 'flex';
             document.getElementById('trailer-overlay').style.display = 'flex';
+            
             if (!trailerPlayer) {
-                trailerPlayer = new Vimeo.Player(document.querySelector('#trailer-video-frame'));
+                const iframe = document.getElementById('trailer-video-frame');
+                trailerPlayer = new Vimeo.Player(iframe);
             }
         }
         
-function playTrailerWithSound() {
-    document.getElementById('trailer-overlay').style.display = 'none';
-    if(trailerPlayer) {
-        // Force play immediately on the user's click gesture
-        trailerPlayer.play().then(() => { 
-            trailerPlayer.setVolume(1); 
-        }).catch(function(error) {
-            console.error("Browser blocked autoplay:", error);
-        });
-    }
-}
+        function playTrailerWithSound() {
+            document.getElementById('trailer-overlay').style.display = 'none';
+            if(trailerPlayer) {
+                // Plays immediately on the user's click gesture
+                trailerPlayer.play().catch(function(error) {
+                    console.error("Browser blocked autoplay:", error);
+                });
+            }
+        }
 
         function closeTrailer() {
             document.getElementById('trailer-modal').style.display = 'none';
-            if (trailerPlayer) { trailerPlayer.pause(); }
+            document.getElementById('trailer-overlay').style.display = 'flex'; // Reset the custom overlay
+            
+            // Bulletproof reset: Wipes the iframe source to instantly kill background audio, then restores it
+            const iframe = document.getElementById('trailer-video-frame');
+            const currentSrc = iframe.src;
+            iframe.src = ''; 
+            setTimeout(() => { iframe.src = currentSrc; }, 50); 
+            
+            trailerPlayer = null; // Clear the player memory for the next open
         }
 
         // --- CHECKOUT LOGIC ---
