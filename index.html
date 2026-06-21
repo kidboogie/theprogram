@@ -571,12 +571,17 @@
             }
         }
         
-        function playTrailerWithSound() {
-            document.getElementById('trailer-overlay').style.display = 'none';
-            if(trailerPlayer) {
-                trailerPlayer.setVolume(1).then(() => { trailerPlayer.play(); });
-            }
-        }
+function playTrailerWithSound() {
+    document.getElementById('trailer-overlay').style.display = 'none';
+    if(trailerPlayer) {
+        // Force play immediately on the user's click gesture
+        trailerPlayer.play().then(() => { 
+            trailerPlayer.setVolume(1); 
+        }).catch(function(error) {
+            console.error("Browser blocked autoplay:", error);
+        });
+    }
+}
 
         function closeTrailer() {
             document.getElementById('trailer-modal').style.display = 'none';
