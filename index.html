@@ -389,7 +389,7 @@
             </div>
             <div id="coupon-message" style="margin-bottom:20px; font-size:0.9rem; min-height:1.2em; font-weight: bold;"></div>
             
-            <div id="paypal-button-container"></div>
+            <button id="paddle-checkout-btn" onclick="triggerPaddle()" class="btn btn-primary" style="width:100%; display:block;">PROCEED TO SECURE CHECKOUT</button>
             <button id="free-unlock-btn" onclick="unlockFreeCourse()" class="btn btn-primary hidden" style="width:100%; margin-top:20px;">UNLOCK COURSE FOR FREE</button>
         </div>
     </div>
@@ -435,7 +435,7 @@
         </div>
     </div>
 
-    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID_HERE&currency=USD"></script>
+    <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
     
     <script>
         // --- API KEYS: REPLACE THESE WITH YOUR HOSTINGER/SUPABASE KEYS ---
@@ -579,22 +579,38 @@
             globalTrailerPlayer = null;
         }
 
-        // --- CHECKOUT LOGIC ---
+// --- PADDLE & CHECKOUT LOGIC ---
+        // You will need to create these products/prices in your Paddle Dashboard
+        const PADDLE_PRICE_BASE = 'pri_01kvr4m2h85t2cbqbftey4ay2a'; // e.g., pri_01h...
+        const PADDLE_PRICE_DISCOUNT = 'pri_01kvr4n5sapqy5hctnm4eg8wrm'; // Your 20% off price
+        let currentPaddlePriceId = PADDLE_PRICE_BASE;
+
+        // Initialize Paddle V2
+        Paddle.Initialize({
+            environment: 'sandbox', // <-- ADD THIS FOR TESTING
+            token: 'test_31402a165dfcc745eb91b99b1ce', 
+            eventCallback: function(data) {
+                // ...
+            }
+        });
+
         function applyCoupon() {
             const input = document.getElementById('promo-input');
             const message = document.getElementById('coupon-message');
             const priceDisplay = document.getElementById('checkout-price-display');
-            const paypalBtn = document.getElementById('paypal-button-container');
+            const paddleBtn = document.getElementById('paddle-checkout-btn');
             const freeBtn = document.getElementById('free-unlock-btn');
             
             const code = input.value.trim().toUpperCase();
 
-            paypalBtn.style.display = 'block';
+            paddleBtn.style.display = 'block';
             freeBtn.classList.add('hidden');
 
             if (code === 'BOOGIE20') {
                 const numPrice = parseFloat(basePrice);
                 currentPrice = (numPrice * 0.80).toFixed(2);
+                currentPaddlePriceId = PADDLE_PRICE_DISCOUNT; // Swap to discounted Price ID
+                
                 message.style.color = 'var(--primary)';
                 message.innerText = "20% DISCOUNT APPLIED!";
                 priceDisplay.innerHTML = `Total: <span style="text-decoration:line-through; color:#666; font-size:1rem;">$${basePrice}</span> $${currentPrice}`;
@@ -604,14 +620,56 @@
                 message.style.color = 'var(--secondary)';
                 message.innerText = "VIP ACCESS GRANTED!";
                 priceDisplay.innerHTML = `Total: <span style="text-decoration:line-through; color:#666; font-size:1rem;">$${basePrice}</span> $0.00`;
-                paypalBtn.style.display = 'none';
+                paddleBtn.style.display = 'none';
                 freeBtn.classList.remove('hidden');
 
             } else {
                 message.style.color = 'var(--accent)';
                 message.innerText = "INVALID PROMO CODE";
                 currentPrice = basePrice;
+                currentPaddlePriceId = PADDLE_PRICE_BASE; // Reset to base Price ID
                 priceDisplay.innerText = "Total: $" + basePrice;
+            }
+        }
+
+        async function triggerPaddle() {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            
+            if (user) {
+                // Open Paddle Checkout Overlay
+                Paddle.Checkout.open({
+                    items: [{ priceId: currentPaddlePriceId, quantity: 1 }],
+                    customer: { email: user.email }
+                });
+            } else {
+                alert("Please log in before purchasing to save your progress.");
+                closeCheckout();
+                openLoginModal();
+            }
+        }
+
+        async function handleSuccessfulPayment() {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            
+            if (user) {
+                // Unlock course in database
+                await supabaseClient.from('profiles').update({ has_access: true }).eq('id', user.id);
+                
+                // Trigger automated welcome email
+                emailjs.send(
+                    'service_tc4wtdo',
+                    'template_gfho90d',
+                    {
+                        student_email: user.email,
+                        student_name: user.user_metadata.full_name || "there" 
+                    },
+                    'WRY-_50mzoXIatz3t' 
+                );
+
+                alert("Payment successful! Welcome to The Program."); 
+                closeCheckout(); 
+                updateCourseUI(user);
+                showSection('lms');
             }
         }
 
@@ -630,10 +688,11 @@
 
         function resetCheckout() {
             currentPrice = basePrice;
+            currentPaddlePriceId = PADDLE_PRICE_BASE;
             document.getElementById('promo-input').value = "";
             document.getElementById('coupon-message').innerText = "";
             document.getElementById('checkout-price-display').innerText = "Total: $" + basePrice;
-            document.getElementById('paypal-button-container').style.display = 'block';
+            document.getElementById('paddle-checkout-btn').style.display = 'block';
             document.getElementById('free-unlock-btn').classList.add('hidden');
         }
 
@@ -1055,8 +1114,8 @@
                         
                         // REPLACE EMAILJS KEYS HERE
                         emailjs.send(
-                            'YOUR_SERVICE_ID',
-                            'YOUR_TEMPLATE_ID',
+                            'service_tc4wtdo',
+                            'template_gfho90d',
                             {
                                 student_email: user.email,
                                 student_name: user.user_metadata.full_name || "there" 
