@@ -919,14 +919,21 @@
 	let currentLessonIndex = 0; //
 
         function loadLesson(index) {
-	    currentLessonIndex = index; //
+            currentLessonIndex = index; 
             const lesson = lessonData[index];
             updateLessonText(index);
-	    document.getElementById('custom-end-screen').style.display = 'none'; 
+            
+            // Hide the custom end screen when they select a new lesson
+            document.getElementById('custom-end-screen').style.display = 'none'; 
 
             if (vimeoPlayer) {
-                vimeoPlayer.destroy().then(() => { createPlayer(lesson); });
+                // Seamlessly swap the video source without destroying the iframe
+                const videoUrl = `https://vimeo.com/${lesson.id}/${lesson.h || ''}`;
+                vimeoPlayer.loadVideo(videoUrl).catch(function(error) {
+                    console.error("Vimeo load error:", error);
+                });
             } else {
+                // Build the player from scratch only on the very first click
                 createPlayer(lesson);
             }
         }
