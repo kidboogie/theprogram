@@ -585,9 +585,10 @@
         const PADDLE_PRICE_DISCOUNT = 'pri_01kvr4n5sapqy5hctnm4eg8wrm'; // Your 20% off price
         let currentPaddlePriceId = PADDLE_PRICE_BASE;
 
-        // Initialize Paddle V2
+// Initialize Paddle V2
+        Paddle.Environment.set('sandbox'); // <-- Set this BEFORE initialization
+        
         Paddle.Initialize({
-            environment: 'sandbox', 
             token: 'test_31402a165dfcc745eb91b99b1ce', 
             eventCallback: function(data) {
                 if (data.name === "checkout.completed") {
