@@ -587,10 +587,12 @@
 
         // Initialize Paddle V2
         Paddle.Initialize({
-            environment: 'sandbox', // <-- ADD THIS FOR TESTING
+            environment: 'sandbox', 
             token: 'test_31402a165dfcc745eb91b99b1ce', 
             eventCallback: function(data) {
-                // ...
+                if (data.name === "checkout.completed") {
+                    handleSuccessfulPayment();
+                }
             }
         });
 
@@ -1079,62 +1081,6 @@
                 updateNavButton(session);
             }
         });
-        
-        // --- PAYPAL ---
-        if(document.getElementById('paypal-button-container')) {
-             paypal.Buttons({
-                createOrder: (data, actions) => {
-                    return actions.order.create({
-                        application_context: { shipping_preference: 'NO_SHIPPING' },
-                        purchase_units: [{
-                            description: 'The Program - Digital Master Class',
-                            amount: {
-                                currency_code: 'USD',
-                                value: currentPrice,
-                                breakdown: {
-                                    item_total: { currency_code: 'USD', value: currentPrice }
-                                }
-                            },
-                            items: [{
-                                name: 'The Program by Kid Boogie',
-                                description: 'Lifetime access to the popping master class.',
-                                unit_amount: { currency_code: 'USD', value: currentPrice },
-                                quantity: '1',
-                                category: 'DIGITAL_GOODS'
-                            }]
-                        }]
-                    });
-                },
-                onApprove: async (data, actions) => {
-                    await actions.order.capture();
-                    const { data: { user } } = await supabaseClient.auth.getUser();
-                    
-                    if (user) {
-                        await supabaseClient.from('profiles').update({ has_access: true }).eq('id', user.id);
-                        
-                        // REPLACE EMAILJS KEYS HERE
-                        emailjs.send(
-                            'service_tc4wtdo',
-                            'template_gfho90d',
-                            {
-                                student_email: user.email,
-                                student_name: user.user_metadata.full_name || "there" 
-                            },
-                            'YOUR_PUBLIC_KEY' 
-                        );
-
-                        alert("Payment successful! Welcome to The Program."); 
-                        closeCheckout(); 
-                        updateCourseUI(user);
-                        showSection('lms');
-                    } else {
-                        alert("Please log in before purchasing to save your progress.");
-                        closeCheckout();
-                        openLoginModal();
-                    }
-                }
-            }).render('#paypal-button-container');
-        }
     </script>
 </body>
 </html>
