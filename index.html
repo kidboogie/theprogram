@@ -658,13 +658,14 @@
                 // Unlock course in database
                 await supabaseClient.from('profiles').update({ has_access: true }).eq('id', user.id);
                 
-                // Trigger automated welcome email
+// Trigger automated welcome email
                 emailjs.send(
                     'service_tc4wtdo',
                     'template_gfho90d',
                     {
                         student_email: user.email,
-                        student_name: user.user_metadata.full_name || "there" 
+                        student_name: user.user_metadata.full_name || "there",
+                        amount_paid: parseFloat(currentPrice).toFixed(2) // <-- ADD THIS LINE
                     },
                     'WRY-_50mzoXIatz3t' 
                 );
