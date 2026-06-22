@@ -926,38 +926,28 @@
             // Hide the custom end screen when switching lessons
             document.getElementById('custom-end-screen').style.display = 'none'; 
 
-            // Always rebuild the player natively
+            // Load the player natively
             createPlayer(lesson);
         }
 
         function createPlayer(lesson) {
             const container = document.getElementById('video-display');
             if(container) {
-                // Determine if it should auto-play (Yes for 'Next Lesson', No for initial load)
+                // Determine if it should auto-play (Yes for subsequent clicks, No for initial page load)
                 let autoPlayParam = (currentLessonIndex === 0) ? "0" : "1";
                 
-                // 1. Natively inject the raw iframe HTML (bypasses SDK bugs)
+                // Build the precise clean URL for an unlisted video
+                const videoUrl = `https://player.vimeo.com/video/${lesson.id}?h=${lesson.h || ''}&autoplay=${autoPlayParam}&api=1`;
+
+                // Inject a pure, standard iframe. No heavy JS binding required to render the video.
                 container.innerHTML = `
-                    <iframe id="vimeo-iframe" 
-                        src="https://player.vimeo.com/video/${lesson.id}?h=${lesson.h || ''}&autoplay=${autoPlayParam}" 
+                    <iframe 
+                        src="${videoUrl}" 
                         frameborder="0" 
                         allow="autoplay; fullscreen; picture-in-picture" 
+                        allowfullscreen
                         style="position:absolute; top:0; left:0; width:100%; height:100%;">
                     </iframe>`;
-                
-                // 2. Attach the Vimeo Tracker to the new iframe so we can detect the 'ended' event
-                const iframeElement = document.getElementById('vimeo-iframe');
-                vimeoPlayer = new Vimeo.Player(iframeElement);
-
-                // --- CUSTOM END SCREEN LOGIC ---
-                vimeoPlayer.on('ended', function() {
-                    if (currentLessonIndex >= lessonData.length - 1) {
-                        document.getElementById('next-lesson-btn').style.display = 'none';
-                    } else {
-                        document.getElementById('next-lesson-btn').style.display = 'inline-block';
-                    }
-                    document.getElementById('custom-end-screen').style.display = 'flex';
-                });
             }
         }
         // --- BUTTON FUNCTIONS ---
