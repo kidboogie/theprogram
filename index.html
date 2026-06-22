@@ -363,14 +363,14 @@
             <div class="lms-content">
                 <div class="video-container">
                     <div id="video-display"></div>
-                </div>
-                <div class="lesson-header" style="border-bottom: 2px solid #222; padding-bottom:20px;">
-                    <h2 id="lesson-title">Welcome</h2>
-                    <p id="lesson-desc" style="color: #888; font-weight: bold;">Select a lesson to begin.</p>
-                </div>
-                <div class="resources-box">
-                    <h4 style="color:white; margin-bottom:15px;">Resources</h4>
-                    <div class="resource-item" style="color:#888;">Files and links for this lesson will appear here.</div>
+                    
+                    <div id="custom-end-screen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5,5,5,0.95); z-index: 10; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; backdrop-filter: blur(4px);">
+                        <h3 style="color: white; margin-bottom: 25px; font-size: 2rem;">Lesson Complete</h3>
+                        <div style="display: flex; gap: 20px;">
+                            <button onclick="repeatLesson()" class="btn btn-secondary"><i class="fas fa-redo" style="margin-right: 8px;"></i> Replay</button>
+                            <button id="next-lesson-btn" onclick="playNextLesson()" class="btn btn-primary">Next Lesson <i class="fas fa-arrow-right" style="margin-left: 8px;"></i></button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -916,10 +916,13 @@
         }
 
         let vimeoPlayer = null;
+	let currentLessonIndex = 0; //
 
         function loadLesson(index) {
+	    currentLessonIndex = index; //
             const lesson = lessonData[index];
             updateLessonText(index);
+	    document.getElementById('custom-end-screen').style.display = 'none'; 
 
             if (vimeoPlayer) {
                 vimeoPlayer.destroy().then(() => { createPlayer(lesson); });
@@ -941,6 +944,35 @@
                     muted: false,
                     controls: true
                 });
+
+                // --- CUSTOM END SCREEN LOGIC ---
+                vimeoPlayer.on('ended', function() {
+                    // Hide the 'Next' button if they just finished the final Outro
+                    if (currentLessonIndex >= lessonData.length - 1) {
+                        document.getElementById('next-lesson-btn').style.display = 'none';
+                    } else {
+                        document.getElementById('next-lesson-btn').style.display = 'inline-block';
+                    }
+                    
+                    // Reveal the premium overlay
+                    document.getElementById('custom-end-screen').style.display = 'flex';
+                });
+            }
+        }
+
+        // --- BUTTON FUNCTIONS ---
+        function repeatLesson() {
+            // Hide the screen and play the video from the beginning
+            document.getElementById('custom-end-screen').style.display = 'none';
+            vimeoPlayer.setCurrentTime(0).then(function() {
+                vimeoPlayer.play();
+            });
+        }
+
+        function playNextLesson() {
+            // Load the next sequence in the array
+            if (currentLessonIndex < lessonData.length - 1) {
+                loadLesson(currentLessonIndex + 1);
             }
         }
 
