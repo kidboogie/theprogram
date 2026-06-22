@@ -926,50 +926,36 @@
             // Hide the custom end screen when switching lessons
             document.getElementById('custom-end-screen').style.display = 'none'; 
 
-            // Create a strict options object bypassing Vimeo's buggy URL parser
-            const videoOptions = {
-                id: lesson.id,
-                hash: lesson.h || ''
-            };
-
-            if (vimeoPlayer) {
-                // Instantly swap the video source
-                vimeoPlayer.loadVideo(videoOptions).then(function() {
-                    // Auto-play the new lesson!
-                    vimeoPlayer.play();
-                }).catch(function(error) {
-                    console.error("Vimeo load error:", error);
-                });
-            } else {
-                // Only build from scratch on the very first click
-                createPlayer(videoOptions);
-            }
+            // Always rebuild the player natively
+            createPlayer(lesson);
         }
 
-        function createPlayer(videoOptions) {
+        function createPlayer(lesson) {
             const container = document.getElementById('video-display');
             if(container) {
-                container.innerHTML = ""; 
+                // Determine if it should auto-play (Yes for 'Next Lesson', No for initial load)
+                let autoPlayParam = (currentLessonIndex === 0) ? "0" : "1";
                 
-                // Initialize using strict ID and Hash parameters
-                vimeoPlayer = new Vimeo.Player('video-display', {
-                    id: videoOptions.id,
-                    hash: videoOptions.hash,
-                    responsive: true,
-                    autoplay: false,
-                    controls: true
-                });
+                // 1. Natively inject the raw iframe HTML (bypasses SDK bugs)
+                container.innerHTML = `
+                    <iframe id="vimeo-iframe" 
+                        src="https://player.vimeo.com/video/${lesson.id}?h=${lesson.h || ''}&autoplay=${autoPlayParam}" 
+                        frameborder="0" 
+                        allow="autoplay; fullscreen; picture-in-picture" 
+                        style="position:absolute; top:0; left:0; width:100%; height:100%;">
+                    </iframe>`;
+                
+                // 2. Attach the Vimeo Tracker to the new iframe so we can detect the 'ended' event
+                const iframeElement = document.getElementById('vimeo-iframe');
+                vimeoPlayer = new Vimeo.Player(iframeElement);
 
                 // --- CUSTOM END SCREEN LOGIC ---
                 vimeoPlayer.on('ended', function() {
-                    // Hide the 'Next' button if they just finished the final Outro
                     if (currentLessonIndex >= lessonData.length - 1) {
                         document.getElementById('next-lesson-btn').style.display = 'none';
                     } else {
                         document.getElementById('next-lesson-btn').style.display = 'inline-block';
                     }
-                    
-                    // Reveal the premium overlay
                     document.getElementById('custom-end-screen').style.display = 'flex';
                 });
             }
