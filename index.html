@@ -923,32 +923,35 @@
             const lesson = lessonData[index];
             updateLessonText(index);
             
-            // Hide the custom end screen when they select a new lesson
+            // Hide the custom end screen when switching lessons
             document.getElementById('custom-end-screen').style.display = 'none'; 
 
+            // Create the strict, API-approved embed URL format for unlisted videos
+            const embedUrl = `https://player.vimeo.com/video/${lesson.id}?h=${lesson.h || ''}`;
+
             if (vimeoPlayer) {
-                // Seamlessly swap the video source without destroying the iframe
-                const videoUrl = `https://vimeo.com/${lesson.id}/${lesson.h || ''}`;
-                vimeoPlayer.loadVideo(videoUrl).catch(function(error) {
+                // Instantly swap the video source
+                vimeoPlayer.loadVideo({ url: embedUrl }).then(function() {
+                    // Auto-play the new lesson!
+                    vimeoPlayer.play();
+                }).catch(function(error) {
                     console.error("Vimeo load error:", error);
                 });
             } else {
-                // Build the player from scratch only on the very first click
-                createPlayer(lesson);
+                // Only build from scratch on the very first click
+                createPlayer(lesson, embedUrl);
             }
         }
 
-        function createPlayer(lesson) {
+        function createPlayer(lesson, embedUrl) {
             const container = document.getElementById('video-display');
             if(container) {
                 container.innerHTML = ""; 
-                const videoUrl = `https://vimeo.com/${lesson.id}/${lesson.h || ''}`;
                 
                 vimeoPlayer = new Vimeo.Player('video-display', {
-                    url: videoUrl,
+                    url: embedUrl,
                     responsive: true,
                     autoplay: false,
-                    muted: false,
                     controls: true
                 });
 
