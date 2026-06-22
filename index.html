@@ -946,17 +946,34 @@
                 let autoPlayParam = (currentLessonIndex === 0) ? "0" : "1";
                 
                 // Build the precise clean URL for an unlisted video
-                const videoUrl = `https://player.vimeo.com/video/${lesson.id}?h=${lesson.h || ''}&autoplay=${autoPlayParam}&api=1`;
+                const videoUrl = `https://player.vimeo.com/video/${lesson.id}?h=${lesson.h || ''}&autoplay=${autoPlayParam}`;
 
-                // Inject a pure, standard iframe. No heavy JS binding required to render the video.
+                // Inject a pure, standard iframe with an ID we can track
                 container.innerHTML = `
-                    <iframe 
+                    <iframe id="vimeo-iframe"
                         src="${videoUrl}" 
                         frameborder="0" 
                         allow="autoplay; fullscreen; picture-in-picture" 
                         allowfullscreen
                         style="position:absolute; top:0; left:0; width:100%; height:100%;">
                     </iframe>`;
+
+                // --- BRING BACK THE TRACKER ---
+                // Now that the HTML is fixed, we can safely attach the listener
+                const iframeElement = document.getElementById('vimeo-iframe');
+                vimeoPlayer = new Vimeo.Player(iframeElement);
+
+                vimeoPlayer.on('ended', function() {
+                    // Hide the 'Next' button if they just finished the final Outro
+                    if (currentLessonIndex >= lessonData.length - 1) {
+                        document.getElementById('next-lesson-btn').style.display = 'none';
+                    } else {
+                        document.getElementById('next-lesson-btn').style.display = 'inline-block';
+                    }
+                    
+                    // Reveal the premium custom overlay instantly!
+                    document.getElementById('custom-end-screen').style.display = 'flex';
+                });
             }
         }
         // --- BUTTON FUNCTIONS ---
