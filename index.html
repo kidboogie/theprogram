@@ -926,12 +926,15 @@
             // Hide the custom end screen when switching lessons
             document.getElementById('custom-end-screen').style.display = 'none'; 
 
-            // Create the strict, API-approved embed URL format for unlisted videos
-            const embedUrl = `https://player.vimeo.com/video/${lesson.id}?h=${lesson.h || ''}`;
+            // Create a strict options object bypassing Vimeo's buggy URL parser
+            const videoOptions = {
+                id: lesson.id,
+                hash: lesson.h || ''
+            };
 
             if (vimeoPlayer) {
                 // Instantly swap the video source
-                vimeoPlayer.loadVideo({ url: embedUrl }).then(function() {
+                vimeoPlayer.loadVideo(videoOptions).then(function() {
                     // Auto-play the new lesson!
                     vimeoPlayer.play();
                 }).catch(function(error) {
@@ -939,17 +942,19 @@
                 });
             } else {
                 // Only build from scratch on the very first click
-                createPlayer(lesson, embedUrl);
+                createPlayer(videoOptions);
             }
         }
 
-        function createPlayer(lesson, embedUrl) {
+        function createPlayer(videoOptions) {
             const container = document.getElementById('video-display');
             if(container) {
                 container.innerHTML = ""; 
                 
+                // Initialize using strict ID and Hash parameters
                 vimeoPlayer = new Vimeo.Player('video-display', {
-                    url: embedUrl,
+                    id: videoOptions.id,
+                    hash: videoOptions.hash,
                     responsive: true,
                     autoplay: false,
                     controls: true
@@ -969,7 +974,6 @@
                 });
             }
         }
-
         // --- BUTTON FUNCTIONS ---
         function repeatLesson() {
             // Hide the screen and play the video from the beginning
