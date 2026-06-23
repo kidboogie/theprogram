@@ -236,8 +236,8 @@
 <p style="color: var(--primary); font-weight: 900; margin-bottom: 15px;">THE DEFINITIVE POPPING MASTER CLASS</p>
 
 <!-- Launch Promo Badge -->
-<div style="display: inline-block; background: var(--accent); color: #fff; padding: 6px 14px; font-size: 0.85rem; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; transform: skew(-10deg); box-shadow: 4px 4px 0px #000; margin-bottom: 5px;">
-    <span style="display: inline-block; transform: skew(10deg);">Launch Promo - 50% Off</span>
+<div id="promo-badge" style="display: inline-block; background: var(--accent); color: #fff; padding: 6px 14px; font-size: 0.85rem; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; transform: skew(-10deg); box-shadow: 4px 4px 0px #000; margin-bottom: 5px; transition: 0.3s;">
+    <span id="promo-badge-text" style="display: inline-block; transform: skew(10deg);">Launch Promo - 50% Off</span>
 </div>
 
 <!-- Updated Price with Anchor -->
@@ -1061,12 +1061,25 @@
         async function updateCourseUI(user) {
             const priceDisplay = document.getElementById('course-price-display');
             const ctaContainer = document.getElementById('course-cta-container');
+            const promoBadge = document.getElementById('promo-badge');
+            const promoText = document.getElementById('promo-badge-text');
+
             if (user) {
                 const { data: profile } = await supabaseClient.from('profiles').select('has_access').eq('id', user.id).single();
                 if (profile && profile.has_access) {
-                    // Paid
+                    // Paid Status - Hide Price and Update CTA
                     if(priceDisplay) priceDisplay.style.display = 'none';
                     if(ctaContainer) ctaContainer.innerHTML = `<button onclick="showSection('lms')" class="btn btn-primary" style="width:100%">ENTER COURSE</button>`;
+                    
+                    // Transform the promo banner into a VIP greeting
+                    if(promoBadge && promoText) {
+                        const fullName = user.user_metadata.full_name || "Boogie Fam";
+                        const firstName = fullName.split(' ')[0]; // Grabs just their first name
+                        
+                        promoBadge.style.background = 'var(--primary)'; // Changes to Cyan
+                        promoBadge.style.color = '#000'; // Black text for contrast
+                        promoText.innerText = `Let's get it poppin, ${firstName}!!`;
+                    }
                 } else {
                     // Logged in, not paid
                     if(ctaContainer) ctaContainer.innerHTML = `
@@ -1075,7 +1088,7 @@
                     `;
                 }
             } else {
-                // Guest
+                // Guest / Not logged in
                  if(ctaContainer) ctaContainer.innerHTML = `
                     <button onclick="openTrailer()" class="btn btn-outline-accent" style="width: 100%;">WATCH TRAILER</button>
                     <button onclick="checkLoginAndPay()" class="btn btn-primary" style="width: 100%;">Enroll Now</button>
