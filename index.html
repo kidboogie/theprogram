@@ -450,6 +450,11 @@
             <div id="trailer-wrapper" style="position:relative; padding:56.25% 0 0 0;">
                 <!-- Initial source is set to blank, JavaScript forces an active URL update on click to grant hardware permission -->
                 <iframe id="trailer-video-frame" src="" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Course Trailer"></iframe>
+                
+                <!-- NEW CUSTOM UNMUTE BUTTON -->
+                <button id="unmute-trailer-btn" class="btn btn-primary" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); z-index: 20; display:none; box-shadow: 0px 0px 30px rgba(0,0,0,0.8);">
+                    <i class="fas fa-volume-up" style="margin-right: 8px;"></i> TAP FOR SOUND
+                </button>
             </div>
         </div>
     </div>
@@ -577,15 +582,27 @@
             // 1. Reveal modal window layout
             document.getElementById('trailer-modal').style.display = 'flex';
             
-            // 2. Direct injection of standard hardware autoplay into the source stream.
+            // 2. Direct injection of standard hardware autoplay into the source stream
             var iframe = document.getElementById('trailer-video-frame');
             iframe.src = "https://player.vimeo.com/video/1203278467?h=e2e8095d51&badge=0&autopause=0&player_id=0&app_id=58479&controls=1&title=0&byline=0&portrait=0&autoplay=1";
-
             
             // 3. Mount SDK Controller interface tracking
             globalTrailerPlayer = new Vimeo.Player(iframe);
 
-            // 4. Listen for the end of the trailer and auto-close
+            // 4. Reveal the "Tap for Sound" button
+            var unmuteBtn = document.getElementById('unmute-trailer-btn');
+            unmuteBtn.style.display = 'inline-block';
+            
+            // 5. Force audio on when the custom button is clicked
+            unmuteBtn.onclick = function() {
+                globalTrailerPlayer.setVolume(1).then(function() {
+                    unmuteBtn.style.display = 'none'; // Hide button after success
+                }).catch(function(error) {
+                    unmuteBtn.style.display = 'none'; // Hide even if it fails, falling back to native controls
+                });
+            };
+
+            // 6. Listen for the end of the trailer and auto-close
             globalTrailerPlayer.on('ended', function() {
                 closeTrailer();
             });
@@ -595,7 +612,10 @@
             // 1. Hide modal window container
             document.getElementById('trailer-modal').style.display = 'none';
             
-            // 2. Complete memory wipe. Guarantees background audio stops instantly.
+            // 2. Hide the sound button to reset it for next time
+            document.getElementById('unmute-trailer-btn').style.display = 'none';
+            
+            // 3. Complete memory wipe. Guarantees background audio stops instantly.
             var iframe = document.getElementById('trailer-video-frame');
             iframe.src = '';
             globalTrailerPlayer = null;
