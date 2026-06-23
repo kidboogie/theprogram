@@ -590,15 +590,14 @@
 
 // --- PADDLE & CHECKOUT LOGIC ---
         // You will need to create these products/prices in your Paddle Dashboard
-        const PADDLE_PRICE_BASE = 'pri_01kvr4m2h85t2cbqbftey4ay2a'; // e.g., pri_01h...
-        const PADDLE_PRICE_DISCOUNT = 'pri_01kvr4n5sapqy5hctnm4eg8wrm'; // Your 20% off price
+        const PADDLE_PRICE_BASE = 'pri_01kvr3jvtjt82p2n40w1bwqaw5'; // e.g., pri_01h...
+        const PADDLE_PRICE_DISCOUNT = 'pri_01kvr3nttcbxy1w92pkhxy8ty7'; // Your 20% off price
         let currentPaddlePriceId = PADDLE_PRICE_BASE;
 
 // Initialize Paddle V2
-        Paddle.Environment.set('sandbox'); // <-- Set this BEFORE initialization
         
         Paddle.Initialize({
-            token: 'test_31402a165dfcc745eb91b99b1ce', 
+            token: 'live_00ab6fee1a8fbe7298c16e280d1', 
             eventCallback: function(data) {
                 if (data.name === "checkout.completed") {
                     handleSuccessfulPayment();
